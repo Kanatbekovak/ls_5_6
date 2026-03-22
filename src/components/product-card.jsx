@@ -5,7 +5,7 @@ import { useCategory } from '../store/category-store'
 const { Paragraph, Text, Title } = Typography
 
 export function ProductCard({ product }) {
-    const categories = useCategory(state => state.data)
+    const { data: categories } = useCategory();
     const currentCategory = categories.find((item) => item.value === product.categorie_id)?.label
 
     return (

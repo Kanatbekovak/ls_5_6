@@ -1,23 +1,27 @@
 import { Card,Button, Typography,Tag } from "antd"
-import { useEffect } from "react"
+
 import { useNavigate, useParams } from "react-router-dom"
-import { useProductsStore } from "../store/products-store"
+
 import { ProductCard } from "../components/product-card"
+import { useQuery } from "@tanstack/react-query"
+import { productService } from "../services/products.service.js"
+
 
 const {Text,Title,Paragraph} = Typography
 
 
 export const ProductDetail=() => {
     const { id } = useParams();
-    const { loading ,error,loadDataOneProduct,oneProduct } = useProductsStore()
+    const { data: oneProduct, isPending, error } = useQuery({
+        queryKey: ['product', id],
+        queryFn: () => productService.getById(id),
+        enabled: !!id,
+    });
 
     const navigate = useNavigate()
 
-    useEffect(()=> {
-        loadDataOneProduct(id)
-    },[id])
 
-    if(loading || !oneProduct) {
+    if(isPending || !oneProduct) {
     return <div>LOADING...</div>
     }
 

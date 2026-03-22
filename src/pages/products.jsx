@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+
 import { useDebounce } from "../hooks/use-debounce"
 import { useProductsStore } from "../store/products-store"
 import { useFiltersStore } from "../store/use-filter"
@@ -11,25 +11,23 @@ const {Text} = Typography
 
 export function Products() {
 
-    const { data: categories, loadCategories } = useCategory()
-    const {data,loading,error,loadData} = useProductsStore()
+    const { data: categories, isPending: CategoryLoading } = useCategory();
     const {search,setSearch,categoryId,setCategoryId} = useFiltersStore()
     const debouncedSearch = useDebounce(search,500)
 
-    useEffect(() => {
-        loadData(debouncedSearch,categoryId)
-    },[debouncedSearch,categoryId])
+    const {data,isPending,error} = useProductsStore({
+            name: `*${debouncedSearch}`,
+            categorie_id: categoryId,
+        }
+    )
 
-    useEffect(() => {
-        loadCategories()
-    },[])
 
     const resetFilters = () => {
         setCategoryId(null)
         setSearch('')
     }
 
-    if(loading) {
+    if(isPending) {
         return <div>LOADING...</div>
     }
     return (
@@ -58,8 +56,8 @@ export function Products() {
                 <Text type='danger' className='page-products__error'>{error}</Text>
             )}
 
-            <Spin spinning={loading}>
-                {data?.length === 0 && !loading ? (
+            <Spin spinning={isPending}>
+                {data?.length === 0 && !isPending ? (
                     <div className="page-products__empty">
                         <Empty
                             description={

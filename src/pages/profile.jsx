@@ -1,24 +1,24 @@
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query'
-import { notification } from 'antd'
-import { useState } from 'react'
 import {postService} from '../services/post.service.js'
+import {useState} from 'react'
+import {notification} from 'antd'
 
 export function Profile() {
     const queryClient = useQueryClient()
-    
-    const {data,isPending} = useQuery({
-        queryKey:['posts'],
+
+    const { data, isPending } = useQuery({
+        queryKey: ['posts'],
         queryFn: postService.get
     })
-    
-    const {mutate,isPending: deletePending} = useMutation({
+
+    const { mutate, isPending: deletePending } = useMutation({
         mutationFn: postService.delete,
         onSuccess() {
-            queryClient.invalidateQueries({queryKey:['posts']})
+            queryClient.invalidateQueries({ queryKey: ['posts'] })
         }
     })
 
-    if(isPending) {
+    if (isPending) {
         return <div>Loading...</div>
     }
 
@@ -39,11 +39,11 @@ export function Profile() {
 }
 
 function CreatePost() {
-    const [title,setTitle] = useState('')
-    const [summary,setSummary] = useState('')
+    const [title, setTitle] = useState('')
+    const [summary, setSummary] = useState('')
 
-    const [api,contexHolder] =notification.useNotification();
-    const openNotificationWithIcon = ({type,title,description}) => {
+    const [api, contextHolder] = notification.useNotification();
+    const openNotificationWithIcon = ({ type, title, description }) => {
         api[type]({
             title,
             description
@@ -52,12 +52,12 @@ function CreatePost() {
 
     const queryClient = useQueryClient()
 
-    const {mutate,isPending} = useMutation({
+    const { mutate, isPending } = useMutation({
         mutationFn: postService.create,
         onSuccess: () => {
-            queryClient.invalidateQueries({queryKey:['posts']})
+            queryClient.invalidateQueries({ queryKey: ['posts'] })
             openNotificationWithIcon({
-                type:'success',
+                type: 'success',
                 title: 'Успешно Создан',
                 description: 'Успешно Создан'
             })
@@ -65,16 +65,16 @@ function CreatePost() {
     })
 
     const handleSubmit = () => {
-        mutate({title,summary})
+        mutate({ title, summary })
         setTitle('')
         setSummary('')
     }
 
     return (
         <div>
-            {contexHolder}
-            <input type='text' placeholder={'Title'} value={title} onChange={e => setTitle(e.target.value)} />
-            <input type='text' placeholder={'Title'} value={summary} onChange={e => setSummary(e.target.value)} />
+            {contextHolder}
+            <input type="text" placeholder={'Title'} value={title} onChange={e => setTitle(e.target.value)} />
+            <input type="text" placeholder={'Title'} value={summary} onChange={e => setSummary(e.target.value)} />
             <button onClick={handleSubmit} disabled={isPending}>Create</button>
         </div>
     )
