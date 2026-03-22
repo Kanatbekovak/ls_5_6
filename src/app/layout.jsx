@@ -1,7 +1,8 @@
-import { ConfigProvider, Layout, Menu, Typography } from "antd"
+import { Button, ConfigProvider, Layout, Menu, Typography } from "antd"
 import { useCartStore } from "../store/cart-store"
-import { NavLink, Outlet } from "react-router-dom"
+import { NavLink, Outlet, useNavigate } from "react-router-dom"
 import { CartDrawer } from "../components/cart-drawer"
+import { useSession } from "../store/session-store"
 
 
 const {Header,Content} = Layout
@@ -9,6 +10,26 @@ const {Title,Text} =Typography
 
 export function AppLayout() {
   const open = useCartStore(state=> state.open)
+  const {isAuth,clear} = useSession()
+  const navigate = useNavigate()
+
+  const renderAuthButton = ()=>{
+    if(isAuth) {
+      return(
+        <button onClick={()=> {
+          clear() 
+          navigate('/login')
+        }}
+        className="app-header__link app-header__cart-button"
+        >
+          Выйти
+        </button>
+      )
+    }
+    else {
+      return <NavLink to='/login' className='app-header__link'>Войти</NavLink>
+    }
+  }
   return (
     <>
       <ConfigProvider>
@@ -36,6 +57,10 @@ export function AppLayout() {
                   label: (
                     <NavLink to='/profile' className='app-header__link'>Профиль</NavLink>
                   )
+                }, 
+                {
+                  key: 'login',
+                  label:renderAuthButton(),
                 }, 
                 {
                   key: 'cart',

@@ -5,6 +5,8 @@ import { ProductDetail } from "../pages/product-detail.jsx";
 import { Profile } from "../pages/profile.jsx";
 import { Home } from "../pages/home.jsx";
 import { AppProvider } from "./app-provider.jsx";
+import { Register } from "../pages/register.jsx";
+import { Login } from "../pages/login.jsx";
 
 
 
@@ -31,6 +33,14 @@ export const router = createBrowserRouter([
             {
                 path: '/profile',
                 element: <Profile />
+            },
+            {
+                path: '/register',
+                element: <Register />
+            },
+            {
+                path: '/login',
+                element: <Login />
             }
         ]
     }
